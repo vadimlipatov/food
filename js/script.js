@@ -33,7 +33,8 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   //TIMER
-  const deadline = "2022-09-29";
+  // const deadline = "2022-09-30 20:29:22";
+  const deadline = new Date(new Date().getTime() + 99999999); //отсчет от текущего времени + 9999999сек
 
   function getTimeRemaining(endtime) {
     const t = Date.parse(endtime) - Date.parse(new Date());
@@ -60,12 +61,19 @@ document.addEventListener("DOMContentLoaded", () => {
     let intId = setInterval(updateClock, 1000);
     updateClock();
 
+    function getZero(el) {
+      if (el > 0 && el < 10) {
+        return `0${el}`;
+      }
+      return el;
+    }
+
     function updateClock() {
       const t = getTimeRemaining(deadline);
-      days.textContent = t.days < 10 ? `0${t.days}` : t.days;
-      hours.textContent = t.hours < 10 ? `0${t.hours}` : t.hours;
-      minutes.textContent = t.minutes;
-      seconds.textContent = t.seconds;
+      days.textContent = getZero(t.days);
+      hours.textContent = getZero(t.hours);
+      minutes.textContent = getZero(t.minutes);
+      seconds.textContent = getZero(t.seconds);
 
       if (t.total <= 0) {
         clearInterval(intId);
@@ -74,4 +82,39 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   setClock(".timer", deadline);
+
+  //MODAL
+  const openModalBtns = document.querySelectorAll("[data-modal]");
+  const closeModalBtn = document.querySelector("[modal-close]");
+  const modal = document.querySelector(".modal");
+
+  function showModal() {
+    modal.style.display = "block";
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeModal() {
+    modal.style.display = "none";
+    document.body.style.overflow = "scroll";
+  }
+
+  openModalBtns.forEach((item) => {
+    item.addEventListener("click", showModal);
+  });
+
+  closeModalBtn.addEventListener("click", closeModal);
+
+  //Fade click -> close modal
+  modal.addEventListener("click", (e) => {
+    if (e.target == modal) {
+      closeModal();
+    }
+  });
+  //Escape click -> close modal
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && modal.style.display === 'block') {
+      closeModal();
+      console.log('click')
+    }
+  });
 }); //end DOMContentLoaded
