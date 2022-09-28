@@ -34,7 +34,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   //TIMER
   // const deadline = "2022-09-30 20:29:22";
-  const deadline = new Date(new Date().getTime() + 99999999); //отсчет от текущего времени + 9999999сек
+  //отсчет от текущего времени + 9999999сек
+  const deadline = new Date(new Date().getTime() + 99999999);
 
   function getTimeRemaining(endtime) {
     const t = Date.parse(endtime) - Date.parse(new Date());
@@ -62,7 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
     updateClock();
 
     function getZero(el) {
-      if (el > 0 && el < 10) {
+      if (el >= 0 && el < 10) {
         return `0${el}`;
       }
       return el;
@@ -91,6 +92,8 @@ document.addEventListener("DOMContentLoaded", () => {
   function showModal() {
     modal.style.display = "block";
     document.body.style.overflow = "hidden";
+    clearInterval(timerId);
+    window.removeEventListener("scroll", showModalByScroll);
   }
 
   function closeModal() {
@@ -112,9 +115,22 @@ document.addEventListener("DOMContentLoaded", () => {
   });
   //Escape click -> close modal
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && modal.style.display === 'block') {
+    if (e.key === "Escape" && modal.style.display === "block") {
       closeModal();
-      console.log('click')
     }
   });
+
+  const timerId = setTimeout(showModal, 15000);
+
+  function showModalByScroll() {
+    if (
+      window.pageYOffset + document.documentElement.clientHeight >=
+      document.documentElement.scrollHeight
+    ) {
+      showModal();
+      window.removeEventListener("scroll", showModalByScroll);
+    }
+  }
+
+  window.addEventListener("scroll", showModalByScroll);
 }); //end DOMContentLoaded
