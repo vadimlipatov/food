@@ -33,16 +33,45 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   //TIMER
-  const deadline = "2022-09-30";
+  const deadline = "2022-09-29";
 
   function getTimeRemaining(endtime) {
     const t = Date.parse(endtime) - Date.parse(new Date());
-    days = Math.floor(t / (1000 * 60 * 60 * 24));
-    
-    hours = Math.floor(t / (1000 * 60 * 60));
-    minutes = Math.floor(t / (1000 * 60));
-    console.log(days);
+    const days = Math.floor(t / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((t / (1000 * 60 * 60)) % 24);
+    const minutes = Math.floor((t / (1000 * 60)) % 60);
+    const seconds = Math.floor((t / 1000) % 60);
+
+    return {
+      total: t,
+      days: days,
+      hours: hours,
+      minutes: minutes,
+      seconds: seconds,
+    };
   }
 
-  getTimeRemaining(deadline);
-});
+  function setClock(selector, endtime) {
+    const timer = document.querySelector(selector);
+    const days = timer.querySelector("#days");
+    const hours = timer.querySelector("#hours");
+    const minutes = timer.querySelector("#minutes");
+    const seconds = timer.querySelector("#seconds");
+    let intId = setInterval(updateClock, 1000);
+    updateClock();
+
+    function updateClock() {
+      const t = getTimeRemaining(deadline);
+      days.textContent = t.days < 10 ? `0${t.days}` : t.days;
+      hours.textContent = t.hours < 10 ? `0${t.hours}` : t.hours;
+      minutes.textContent = t.minutes;
+      seconds.textContent = t.seconds;
+
+      if (t.total <= 0) {
+        clearInterval(intId);
+      }
+    }
+  }
+
+  setClock(".timer", deadline);
+}); //end DOMContentLoaded
